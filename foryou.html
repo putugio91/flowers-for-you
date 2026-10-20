@@ -1,0 +1,404 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowers For You</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    overflow: hidden;
+    font-family: Georgia, serif;
+    color: white;
+    background:
+        radial-gradient(ellipse at 50% 75%, #192d57 0%, #10172e 45%, #050610 100%);
+}
+
+/* Bintang */
+.stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        radial-gradient(2px 2px at 10% 20%, white 99%, transparent),
+        radial-gradient(1px 1px at 25% 70%, white 99%, transparent),
+        radial-gradient(2px 2px at 45% 15%, white 99%, transparent),
+        radial-gradient(1px 1px at 65% 30%, white 99%, transparent),
+        radial-gradient(2px 2px at 80% 65%, white 99%, transparent),
+        radial-gradient(1px 1px at 90% 20%, white 99%, transparent),
+        radial-gradient(1px 1px at 35% 40%, white 99%, transparent),
+        radial-gradient(2px 2px at 72% 12%, white 99%, transparent);
+    background-size: 260px 220px;
+    animation: twinkle 3s ease-in-out infinite alternate;
+}
+
+.moon {
+    position: absolute;
+    top: 70px;
+    right: 8%;
+    width: 35px;
+    height: 35px;
+    background: #fff8dc;
+    border-radius: 50%;
+    box-shadow: 0 0 25px #fff8dc;
+}
+
+.heading {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding-top: 30px;
+}
+
+.heading h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+
+.heading h1 {
+    margin: 12px 0 0;
+    font-size: clamp(25px, 6vw, 38px);
+    font-style: italic;
+    color: #d9a0ff;
+    text-shadow: 0 0 15px #b94dff;
+}
+
+/* Area buket */
+.scene {
+    position: absolute;
+    width: 300px;
+    height: 410px;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.bouquet {
+    position: absolute;
+    bottom: 115px;
+    left: 50%;
+    width: 260px;
+    height: 280px;
+    transform: translateX(-50%);
+}
+
+/* Batang */
+.stem {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 5px;
+    height: var(--height);
+    background: linear-gradient(to right, #17652e, #69d66a, #1c7439);
+    border-radius: 10px;
+    transform-origin: bottom;
+    transform: rotate(var(--angle)) scaleY(0);
+    animation: grow 1.8s ease-out forwards;
+    animation-delay: var(--delay);
+}
+
+/* Daun */
+.leaf {
+    position: absolute;
+    bottom: var(--bottom);
+    left: 50%;
+    width: 23px;
+    height: 11px;
+    background: linear-gradient(135deg, #78ed8c, #187a46);
+    border-radius: 100% 0 100% 0;
+    transform: rotate(var(--rotation));
+    transform-origin: left center;
+}
+
+/* Bunga */
+.bloom {
+    position: absolute;
+    left: 50%;
+    bottom: calc(var(--height) - 5px);
+    width: 42px;
+    height: 48px;
+    transform: translateX(-50%) scale(0);
+    animation: flowerOpen 1s cubic-bezier(.2,.8,.3,1.2) forwards;
+    animation-delay: var(--delay);
+}
+
+.petal {
+    position: absolute;
+    left: 11px;
+    top: 0;
+    width: 20px;
+    height: 29px;
+    border-radius: 50% 50% 45% 45%;
+    transform-origin: 50% 24px;
+    background: linear-gradient(to bottom, #f5c5ff, #bd67ef 60%, #7834b5);
+    box-shadow: inset -3px -3px 5px #7e35a7;
+}
+
+.petal:nth-child(1) { transform: rotate(0deg); }
+.petal:nth-child(2) { transform: rotate(60deg); }
+.petal:nth-child(3) { transform: rotate(120deg); }
+.petal:nth-child(4) { transform: rotate(180deg); }
+.petal:nth-child(5) { transform: rotate(240deg); }
+.petal:nth-child(6) { transform: rotate(300deg); }
+
+.flower-center {
+    position: absolute;
+    top: 17px;
+    left: 17px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #fff0a8;
+    box-shadow: 0 0 8px #ffda76;
+}
+
+/* Amplop */
+.envelope {
+    position: absolute;
+    z-index: 5;
+    bottom: 30px;
+    left: 50%;
+    width: 150px;
+    height: 95px;
+    transform: translateX(-50%);
+    border: 0;
+    cursor: pointer;
+    background: #ffb9d9;
+    box-shadow: 0 0 20px #ff8ec955;
+    animation: float 2.5s ease-in-out infinite;
+}
+
+.envelope::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #ff9fcb;
+    clip-path: polygon(0 0, 50% 58%, 100% 0);
+}
+
+.envelope::after {
+    content: "♥";
+    position: absolute;
+    top: 37px;
+    left: 0;
+    right: 0;
+    color: #ef559c;
+    font-size: 23px;
+}
+
+.envelope span {
+    position: absolute;
+    bottom: -24px;
+    left: 0;
+    right: 0;
+    font: 12px Arial, sans-serif;
+    color: #ffd5ed;
+    white-space: nowrap;
+}
+
+/* Kartu ucapan */
+.overlay {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    inset: 0;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+    background: #0009;
+    backdrop-filter: blur(4px);
+}
+
+.overlay.show {
+    display: flex;
+    animation: fadeIn .4s ease;
+}
+
+.card {
+    width: min(340px, 90vw);
+    padding: 28px 22px;
+    text-align: center;
+    color: #5e4260;
+    background: #fff9fc;
+    border: 5px solid white;
+    border-radius: 8px;
+    box-shadow: 0 0 35px #e7aaff55;
+    animation: cardIn .5s ease-out;
+}
+
+.bear {
+    font-family: Arial, sans-serif;
+    font-size: 65px;
+    margin-bottom: 8px;
+}
+
+.card h2 {
+    margin: 8px 0;
+    color: #bb61b9;
+}
+
+.card p {
+    font-family: Arial, sans-serif;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.close {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background: #e7a2ce;
+    color: white;
+    cursor: pointer;
+}
+
+@keyframes grow {
+    to { transform: rotate(var(--angle)) scaleY(1); }
+}
+
+@keyframes flowerOpen {
+    0% { transform: translateX(-50%) scale(0); }
+    75% { transform: translateX(-50%) scale(1.15); }
+    100% { transform: translateX(-50%) scale(1); }
+}
+
+@keyframes float {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -6px; }
+}
+
+@keyframes twinkle {
+    from { opacity: .5; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes cardIn {
+    from { transform: scale(.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@media (max-height: 600px) {
+    .heading { padding-top: 12px; }
+    .scene { transform: translateX(-50%) scale(.78); transform-origin: bottom center; }
+}
+</style>
+</head>
+
+<body>
+<div class="stars"></div>
+<div class="moon"></div>
+
+<header class="heading">
+    <h2>Gift For Her</h2>
+    <h1>Flowers For You</h1>
+</header>
+
+<main class="scene">
+    <div class="bouquet" id="bouquet"></div>
+
+    <button class="envelope" id="openLetter" aria-label="Buka surat">
+        <span>Tap to open 💌</span>
+    </button>
+</main>
+
+<div class="overlay" id="letter">
+    <div class="card">
+        <div class="bear">🧸💗</div>
+        <h2>Flowers For You</h2>
+        <p>
+            Bunga ini mungkin sederhana,<br>
+            tapi semoga bisa membuat harimu<br>
+            lebih indah dan penuh senyuman
+            semiga bisa ingat aku selalu 
+            I LOVE YOU sayang. 💐
+        </p>
+        <p>Jangan lupa bahagia hari ini! ✨</p>
+        <button class="close" id="closeLetter">Tutup 💌</button>
+    </div>
+</div>
+
+<script>
+const bouquet = document.getElementById("bouquet");
+
+/* Pengaturan posisi setiap bunga */
+const flowers = [
+    { x: 50, h: 210, a: 0,   d: 1.0 },
+    { x: 20, h: 170, a: -12, d: 1.2 },
+    { x: 80, h: 175, a: 12,  d: 1.3 },
+    { x: 35, h: 200, a: -5,  d: 1.5 },
+    { x: 65, h: 205, a: 5,   d: 1.6 },
+    { x: 5,  h: 135, a: -18, d: 1.8 },
+    { x: 95, h: 140, a: 18,  d: 1.9 },
+    { x: 43, h: 150, a: -3,  d: 2.0 },
+    { x: 58, h: 160, a: 5,   d: 2.1 }
+];
+
+flowers.forEach((f, i) => {
+    const stem = document.createElement("div");
+    stem.className = "stem";
+    stem.style.left = f.x + "%";
+    stem.style.setProperty("--height", f.h + "px");
+    stem.style.setProperty("--angle", f.a + "deg");
+    stem.style.setProperty("--delay", (f.d - 1) + "s");
+    bouquet.appendChild(stem);
+
+    /* Daun pada batang */
+    for (let j = 0; j < 2; j++) {
+        const leaf = document.createElement("div");
+        leaf.className = "leaf";
+        leaf.style.left = f.x + "%";
+        leaf.style.setProperty("--bottom", (f.h * (j === 0 ? .35 : .58)) + "px");
+        leaf.style.setProperty("--rotation", (j === 0 ? -35 : 135) + f.a + "deg");
+        stem.appendChild(leaf);
+    }
+
+    const bloom = document.createElement("div");
+    bloom.className = "bloom";
+    bloom.style.left = f.x + "%";
+    bloom.style.setProperty("--height", f.h + "px");
+    bloom.style.setProperty("--delay", f.d + "s");
+
+    for (let j = 0; j < 6; j++) {
+        const petal = document.createElement("div");
+        petal.className = "petal";
+        bloom.appendChild(petal);
+    }
+
+    const center = document.createElement("div");
+    center.className = "flower-center";
+    bloom.appendChild(center);
+    stem.appendChild(bloom);
+});
+
+const letter = document.getElementById("letter");
+
+document.getElementById("openLetter").addEventListener("click", () => {
+    letter.classList.add("show");
+});
+
+document.getElementById("closeLetter").addEventListener("click", () => {
+    letter.classList.remove("show");
+});
+
+letter.addEventListener("click", (event) => {
+    if (event.target === letter) {
+        letter.classList.remove("show");
+    }
+});
+</script>
+</body>
+</html>
